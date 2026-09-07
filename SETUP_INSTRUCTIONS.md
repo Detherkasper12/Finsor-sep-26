@@ -1,238 +1,108 @@
-# Finsor App Setup Instructions
+# Finsor Development Setup
 
-## Prerequisites Installation
+This document describes the current setup. Historical Firebase/Firestore instructions no longer apply to the current implementation.
 
-### 1. Install Flutter SDK
+## Prerequisites
 
-#### For Windows:
-1. **Download Flutter SDK**
-   - Go to [Flutter Windows Install](https://docs.flutter.dev/get-started/install/windows)
-   - Download the latest stable release ZIP file
-   - Extract to `C:\flutter` (or another location)
+Install the current stable Flutter SDK for your operating system, including the platform toolchains you need (Android Studio/Android SDK for Android, Xcode/CocoaPods on macOS for iOS).
 
-2. **Add Flutter to PATH**
-   - Open System Properties → Advanced → Environment Variables
-   - Under "User variables", find "Path" and click Edit
-   - Add `C:\flutter\bin` to the PATH
-   - Click OK and restart your terminal
+Verify the environment:
 
-3. **Verify Installation**
-   ```bash
-   flutter --version
-   flutter doctor
-   ```
-
-#### For macOS:
-1. **Download Flutter SDK**
-   ```bash
-   cd ~/development
-   wget https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_arm64_3.16.0-stable.zip
-   unzip flutter_macos_arm64_3.16.0-stable.zip
-   ```
-
-2. **Add to PATH**
-   ```bash
-   echo 'export PATH="$PATH:`pwd`/flutter/bin"' >> ~/.zshrc
-   source ~/.zshrc
-   ```
-
-### 2. Install Android Studio
-
-1. **Download Android Studio**
-   - Go to [Android Studio](https://developer.android.com/studio)
-   - Download and install
-
-2. **Install Android SDK**
-   - Open Android Studio
-   - Go to Tools → SDK Manager
-   - Install latest Android SDK (API 33+)
-   - Accept licenses: `flutter doctor --android-licenses`
-
-### 3. Install VS Code (Optional but Recommended)
-
-1. **Download VS Code**
-   - Go to [VS Code](https://code.visualstudio.com/)
-   - Install Flutter and Dart extensions
-
-## Project Setup
-
-### 1. Navigate to Project Directory
-```bash
-cd C:\Users\abrek_otvjrzk\StudioProjects\Finsor
-```
-
-### 2. Install Dependencies
-```bash
-flutter pub get
-```
-
-### 3. Generate Code
-```bash
-flutter packages pub run build_runner build --delete-conflicting-outputs
-```
-
-### 4. Check Flutter Setup
 ```bash
 flutter doctor
+flutter --version
 ```
 
-### 5. Connect Device or Start Emulator
+## Project setup
+
 ```bash
-# List available devices
-flutter devices
-
-# Start Android emulator (if installed)
-flutter emulators
-flutter emulators --launch <emulator_id>
-```
-
-### 6. Run the App
-```bash
-flutter run
-```
-
-## Firebase Configuration
-
-### 1. Create Firebase Project
-1. Go to [Firebase Console](https://console.firebase.google.com)
-2. Create new project named "finsor"
-3. Enable Google Analytics (optional)
-
-### 2. Add Android App
-1. Click "Add app" → Android
-2. Package name: `com.example.finsor`
-3. Download `google-services.json`
-4. Place in `android/app/` directory
-
-### 3. Add iOS App (if targeting iOS)
-1. Click "Add app" → iOS
-2. Bundle ID: `com.example.finsor`
-3. Download `GoogleService-Info.plist`
-4. Place in `ios/Runner/` directory
-
-### 4. Enable Authentication
-1. Go to Authentication → Sign-in method
-2. Enable "Email/Password"
-3. Enable "Google" (add your app's SHA certificates)
-
-### 5. Create Firestore Database
-1. Go to Firestore Database
-2. Create database in test mode
-3. Set up security rules (optional)
-
-## Getting SHA Certificate for Google Sign-In
-
-### Windows:
-```bash
-cd android
-.\gradlew signingReport
-```
-
-### macOS/Linux:
-```bash
-cd android
-./gradlew signingReport
-```
-
-Copy the SHA1 fingerprint and add it to Firebase project settings.
-
-## Troubleshooting Common Issues
-
-### 1. Flutter Command Not Found
-- Ensure Flutter is properly added to PATH
-- Restart terminal/command prompt
-- Run `where flutter` (Windows) or `which flutter` (macOS/Linux)
-
-### 2. Android License Issues
-```bash
-flutter doctor --android-licenses
-```
-Accept all licenses.
-
-### 3. Gradle Issues
-```bash
-cd android
-.\gradlew clean
-cd ..
-flutter clean
+git clone https://github.com/Detherkasper12/Finsor-sep-26.git
+cd Finsor-sep-26
 flutter pub get
 ```
 
-### 4. iOS Issues (macOS only)
+Create local environment files from the committed public template:
+
 ```bash
-cd ios
-pod install
-cd ..
+cp .env.example .env.dev
+cp .env.example .env.prod
 ```
 
-### 5. Build Runner Issues
-```bash
-flutter packages pub run build_runner clean
-flutter packages pub run build_runner build --delete-conflicting-outputs
+On Windows PowerShell, the equivalent is:
+
+```powershell
+Copy-Item .env.example .env.dev
+Copy-Item .env.example .env.prod
 ```
 
-## OpenAI API Setup
+For cloud features, set the following public client values:
 
-1. **Get API Key**
-   - Go to [OpenAI Platform](https://platform.openai.com)
-   - Create account and get API key
-   - Copy the key (starts with "sk-")
-
-2. **Configure in App**
-   - Run the app
-   - Go to Settings
-   - Tap "OpenAI API Key"
-   - Enter your API key
-   - AI Assistant will be available
-
-## Running the App
-
-### Development Mode
-```bash
-flutter run
+```dotenv
+SUPABASE_URL=https://YOUR_PROJECT.supabase.co
+SUPABASE_ANON_KEY=YOUR_ANON_PUBLIC_KEY
+ENV_NAME=dev
+GOOGLE_WEB_CLIENT_ID=
 ```
 
-### Debug Mode
+Use `ENV_NAME=prod` in `.env.prod`. The Flutter client may use a Supabase anon/public key; it must never contain a Supabase service-role key, OpenAI/provider secret, signing secret, or other privileged credential.
+
+## Run locally
+
+Development environment:
+
 ```bash
-flutter run --debug
+flutter run --dart-define=ENV=dev
 ```
 
-### Release Mode
+Production configuration during a local build/test:
+
 ```bash
-flutter run --release
+flutter run --dart-define=ENV=prod
 ```
 
-### Build APK
+If Supabase is not configured, supported core finance functionality should continue in offline mode.
+
+## Quality checks
+
+Before merging normal Flutter changes, run:
+
 ```bash
-flutter build apk --release
+dart format --output=none --set-exit-if-changed lib test integration_test
+flutter analyze
+flutter test
 ```
 
-### Build for iOS
+For startup/navigation/auth/sync changes, also run the integration smoke test on an available target:
+
 ```bash
-flutter build ios --release
+flutter test integration_test/app_test.dart -d <device_id>
 ```
 
-## App Features After Setup
+## Supabase development
 
-Once properly set up, you'll have access to:
+The repository stores database migrations under `supabase/migrations/` and Edge Functions under `supabase/functions/`. Treat migrations as the source of truth for schema/RLS changes. Review per-user RLS and sync compatibility before applying schema changes.
 
-✅ **Authentication** - Email/Password and Google Sign-In
-✅ **Multi-Wallet Management** - Cash, Bank, Credit, etc.
-✅ **Smart Transaction Entry** - Numpad UI with categories
-✅ **Beautiful Analytics** - Charts and spending insights
-✅ **AI Financial Assistant** - ChatGPT-powered advice
-✅ **Cloud Sync** - Firebase backup and sync
-✅ **Offline Support** - Works without internet
-✅ **Dark/Light Themes** - Material Design 3
+Use separate development and production Supabase projects/configuration. Prefer development access for agent/MCP tooling; keep production access read-only unless a production write is intentionally required and reviewed.
 
-## Support
+## Authentication status
 
-If you encounter issues:
-1. Run `flutter doctor` and fix any issues
-2. Check the troubleshooting section above
-3. Ensure all dependencies are properly installed
-4. Verify Firebase configuration is correct
+Authentication and Google Sign-In are currently feature-gated in `lib/config/app_config.dart`. Do not assume those flows are active merely because the implementation exists. Re-enable them only as an intentional product/release change with platform OAuth configuration and tests.
 
-The app is production-ready and includes all the features specified in your requirements! 🚀
+## Troubleshooting
 
+If packages/build state becomes inconsistent:
 
+```bash
+flutter clean
+flutter pub get
+flutter analyze
+flutter test
+```
+
+For Android SDK problems, use `flutter doctor` and Android Studio's SDK Manager. For iOS platform problems, use `flutter doctor`, Xcode, and CocoaPods on macOS. Do not commit `local.properties`, IDE caches, generated coverage, local test output, `.env.*`, or Supabase CLI temporary state.
+
+## AI/provider secrets
+
+AI-provider keys belong behind server-side infrastructure such as Supabase Edge Functions. Never add a raw provider secret to Dart source, Flutter assets, `.env.dev`, or `.env.prod`.
+
+For project architecture and agent instructions, read `AGENTS.md` first.

@@ -1,0 +1,44 @@
+name: Flutter CI
+
+on:
+  push:
+    branches:
+      - main
+      - 'chore/**'
+      - 'feature/**'
+      - 'fix/**'
+      - 'refactor/**'
+  pull_request:
+
+jobs:
+  analyze-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Create CI environment files
+        shell: bash
+        run: |
+          cp .env.example .env.dev
+          sed 's/ENV_NAME=dev/ENV_NAME=prod/' .env.example > .env.prod
+
+      - name: Flutter version
+        run: flutter --version
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Static analysis
+        run: flutter analyze
+
+      - name: Unit and widget tests
+        run: flutter test
