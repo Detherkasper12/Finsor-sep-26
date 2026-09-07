@@ -12,18 +12,17 @@
 .swiftpm/
 migrate_working_dir/
 
-# IntelliJ related
+# IntelliJ / IDE related
 *.iml
 *.ipr
 *.iws
 .idea/
+/.vs/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
+# VS Code workspace settings may be intentionally versioned.
 #.vscode/
 
-# Flutter/Dart/Pub related
+# Flutter / Dart / Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
@@ -33,18 +32,36 @@ migrate_working_dir/
 .pub/
 /build/
 
+# Android / machine-local configuration
+/local.properties
+/android/local.properties
+
+# Test / generated output
+/coverage/
+/test_output*.txt
+/[0-9]*_bootstrap_test/
+/[0-9]*_conflict_test/
+/[0-9]*_metadata_test/
+/[0-9]*_outbox_test/
+/[0-9]*_settings_sync_test/
+/[0-9]*_softdel_test/
+
+# Supabase CLI local state
+/supabase/.temp/
+
 # Symbolication related
 app.*.symbols
 
 # Obfuscation related
 app.*.map.json
 
-# Android Studio will place build artifacts here
+# Android Studio build artifacts
 /android/app/debug
 /android/app/profile
 /android/app/release
 
-# Environment files (secrets)
+# Environment files. Flutter env assets are public configuration only;
+# never store service-role or provider secret keys in the client app.
 .env
 .env.*
 !.env.example
