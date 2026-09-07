@@ -1,0 +1,42 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+  {
+    "name": "Flutter: Attach to Device",
+    "type": "dart",
+    "request": "attach"
+  },
+    {
+      "name": "Finsor (dev) - Windows",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main.dart",
+      "args": ["-d", "windows"],
+      "toolArgs": ["--dart-define=ENV=dev"]
+    },
+    {
+      "name": "Finsor (dev) - Web",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main.dart",
+      "args": ["-d", "chrome"],
+      "toolArgs": ["--dart-define=ENV=dev"]
+    },
+    {
+      "name": "Finsor (prod) - Windows",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main.dart",
+      "args": ["-d", "windows"],
+      "toolArgs": ["--dart-define=ENV=prod"]
+    },
+    {
+      "name": "Finsor (prod) - Web",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main.dart",
+      "args": ["-d", "chrome"],
+      "toolArgs": ["--dart-define=ENV=prod"]
+    }
+  ]
+}

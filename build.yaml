@@ -1,0 +1,17 @@
+targets:
+  $default:
+    builders:
+      freezed:
+        enabled: true
+        options:
+          # Set custom options here if needed
+      json_serializable:
+        enabled: true
+        options:
+          # Set custom options here if needed
+      hive_generator:
+        enabled: true
+        options:
+          # Set custom options here if needed
+
+

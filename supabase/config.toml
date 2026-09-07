@@ -1,0 +1,12 @@
+# Finsor Supabase CLI configuration
+# This file tells the CLI that this directory is the supabase project root.
+# Without it, `supabase db push` uses the wrong workdir and finds zero migrations.
+
+[api]
+enabled = false
+
+[db]
+major_version = 15
+
+[studio]
+enabled = false

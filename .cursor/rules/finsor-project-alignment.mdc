@@ -1,0 +1,34 @@
+---
+description: Reference Finsor documentation to stay aligned with project requirements
+alwaysApply: true
+---
+
+# Finsor Project Alignment
+
+When working on this project, always reference the project documentation to ensure alignment with the established requirements, architecture, and design decisions.
+
+## Documentation Reference
+
+Refer to `finsor_document_all_documentation.md` in the project root for:
+
+- **Product Requirements (PRD):** Features, priorities, and success metrics
+- **Technology Stack:** Flutter/Dart, state management, local persistence, backend services
+- **Project Structure:** Feature-sliced architecture with `lib/` organization
+- **Database Schema:** Tables, relationships, and indexing strategy
+- **User Flows:** Onboarding, transaction entry, AI alerts, budgeting
+- **Styling Guidelines:** Color palette, typography, UI/UX principles, accessibility
+
+## Key Principles
+
+1. **Performance First:** Sub-2s cold start, <500ms transaction persistence
+2. **Privacy-Focused:** Local-first data storage with optional cloud sync
+3. **Clean Architecture:** BLoC pattern, proper dependency injection (GetIt)
+4. **Minimal Design:** 1Money-inspired aesthetic with purposeful animations
+5. **AI Integration:** Smart categorization and spending insights as Premium features
+
+## Before Making Changes
+
+- Verify feature alignment with PRD priorities (P0/P1/P2)
+- Follow the established `lib/` folder structure
+- Maintain consistency with the styling guidelines
+- Ensure database schema compatibility
