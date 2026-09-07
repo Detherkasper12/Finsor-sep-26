@@ -1,34 +1,35 @@
 ---
-description: Reference Finsor documentation to stay aligned with project requirements
+description: Keep all AI coding work aligned with Finsor's actual architecture and quality gates
 alwaysApply: true
 ---
 
 # Finsor Project Alignment
 
-When working on this project, always reference the project documentation to ensure alignment with the established requirements, architecture, and design decisions.
+`AGENTS.md` is the primary source of truth for AI coding instructions. Prefer the current implementation and canonical files under `docs/` over historical plans, completion reports, or archived documentation.
 
-## Documentation Reference
+## Actual Architecture
 
-Refer to `finsor_document_all_documentation.md` in the project root for:
+- Flutter/Dart application.
+- Riverpod is the state-management and dependency wiring approach currently used by the app.
+- Hive is the local-first persistence layer for core finance data.
+- Repositories/services sit between UI/providers and persistence/integration code.
+- Supabase provides optional cloud sync, authentication, realtime features, SQL migrations/RLS, and Edge Functions.
+- Sentry provides observability; platform IAP is currently implemented with `in_app_purchase`.
 
-- **Product Requirements (PRD):** Features, priorities, and success metrics
-- **Technology Stack:** Flutter/Dart, state management, local persistence, backend services
-- **Project Structure:** Feature-sliced architecture with `lib/` organization
-- **Database Schema:** Tables, relationships, and indexing strategy
-- **User Flows:** Onboarding, transaction entry, AI alerts, budgeting
-- **Styling Guidelines:** Color palette, typography, UI/UX principles, accessibility
+Do **not** introduce BLoC, GetIt, or another state-management/DI framework unless an explicit architecture decision requires it. Do not perform repository-wide architecture migrations as part of an unrelated feature.
 
-## Key Principles
+## Product and Engineering Invariants
 
-1. **Performance First:** Sub-2s cold start, <500ms transaction persistence
-2. **Privacy-Focused:** Local-first data storage with optional cloud sync
-3. **Clean Architecture:** BLoC pattern, proper dependency injection (GetIt)
-4. **Minimal Design:** 1Money-inspired aesthetic with purposeful animations
-5. **AI Integration:** Smart categorization and spending insights as Premium features
+- Preserve offline-first behavior: core transaction tracking must continue to work without Supabase connectivity.
+- Never put provider secrets, Supabase service-role keys, or other privileged credentials in the Flutter client.
+- Preserve user isolation and RLS assumptions when changing Supabase schema or sync behavior.
+- Keep financial calculations deterministic and testable; never fabricate amounts or financial data.
+- Preserve localization, currency behavior, RTL support, accessibility, and existing user data unless the task explicitly changes them.
+- Prefer small, reviewable changes over broad rewrites.
 
-## Before Making Changes
+## Before Completing a Change
 
-- Verify feature alignment with PRD priorities (P0/P1/P2)
-- Follow the established `lib/` folder structure
-- Maintain consistency with the styling guidelines
-- Ensure database schema compatibility
+- Inspect the code paths affected by the task instead of relying on old documentation.
+- Update canonical documentation when architecture or setup behavior changes.
+- Run or ensure CI runs formatting/static analysis/tests appropriate to the change.
+- Add or strengthen tests when changing finance calculations, persistence, sync, auth, premium gating, or AI data binding.
